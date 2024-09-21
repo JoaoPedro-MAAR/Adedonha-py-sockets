@@ -1,19 +1,26 @@
 import socket
-import threading
-
-def getlocalhost():
-    return socket.gethostname(socket.gethostname())
-
-HOST = getlocalhost()
-PORT = 8080
 
 
-
-
-class Servidor:
-    def __init__(self):
-        self.socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-        self.socket.bind((HOST, PORT))
-        self.socket.listen(10)
+class Jogador:
+    def __init__(self,hostandport: tuple):
+        self.cliente = socket.socket(socket.AF_INET,socket.SOCK_STREAM)
+        self.cliente.connect((hostandport))
         
+       
+        
+    def send_msg(self,mensagem: str):
+        self.cliente.send(mensagem.encode())
+        
+    def recv_msg(self):
+        print(self.cliente.recv(1024).decode())
+        
+    def troca_msg(self,mensagem:str):
+            self.send_msg(mensagem)
+            self.recv_msg()
+            
+    def troca_mensagem_continua(self):
+        while True:
+            mensagem = input("Digite a mensagem: ")
+            self.troca_msg(mensagem)
+            
     
