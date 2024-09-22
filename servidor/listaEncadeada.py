@@ -139,9 +139,9 @@ class Lista:
             return carga
         
         except TypeError:
-            raise ListaException(f'A posição deve ser um número inteiro')            
+            raise ListaError(f'A posição deve ser um número inteiro')            
         except AssertionError:
-            raise ListaException(f'A posicao não pode ser um número negativo')
+            raise ListaError(f'A posicao não pode ser um número negativo')
         
     def esvaziar(self):
         while not self.esta_vazia():
@@ -159,4 +159,11 @@ class Lista:
         s += ' ]'
         return s
     
+    def remover_elemento(self, carga:any)->any:
+        '''
+        Método que recebe uma carga e remove o primeiro elemento
+        que contém a carga
+        '''
+        posicao = self.busca(carga)
+        return self.remover(posicao)
      

@@ -11,6 +11,7 @@ class Jogador:
     def send_msg(self,mensagem: str):
         self.cliente.send(mensagem.encode())
         
+        
     def recv_msg(self):
         print(self.cliente.recv(1024).decode())
         
@@ -22,5 +23,9 @@ class Jogador:
         while True:
             mensagem = input("Digite a mensagem: ")
             self.troca_msg(mensagem)
+            if mensagem == "sair":
+                self.cliente.close()
+                print("Conexão encerrada")
+                break
             
     
