@@ -65,6 +65,8 @@ class Lista:
         Método que recebe uma chave de busca e retorna True se a chave
         for encontrada na pilha e False caso contrário
         '''
+        if self.esta_vazia():
+            return False
         try:
             self.busca(chave)
             return True

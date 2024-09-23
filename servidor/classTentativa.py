@@ -1,9 +1,9 @@
 class Tentativa:
-    def __init__ (self,user:object,palavra, tema):
+    def __init__ (self,user,palavra):
         self.nome = [user]
-        self.palavra = palavra
-        self.tema = tema
+        self.palavra = palavra.lower()
         self.pontos = 0
+        self.valid = False
     def __str__(self):
         return f'{self.nome} : {self.palavra}'
 
@@ -16,3 +16,17 @@ class Tentativa:
     
     def getPalavra(self):
         return self.palavra
+    
+    def getisValid(self):
+        return self.valid
+    
+    def submit_points(self):
+        if self.getisValid():
+            for i in range(0,len(self.nome)):
+                self.nome[i].soma_pontos(self.pontos)
+    
+    def __eq__(self, value:any) -> bool:
+        if value.getPalavra() == self.getPalavra():
+            return True
+        return False
+    

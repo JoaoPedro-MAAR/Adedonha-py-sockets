@@ -60,6 +60,7 @@ class Servidor:
     def message_treatment(self,message: str,conexao, jogador):
         resto_mensagem = separaProtocolo_Aplicacao(message)
         codigo  = resto_mensagem[0]
+        print(f'codigo: {codigo}')
         
         match codigo.lower():
 
@@ -94,6 +95,7 @@ class Servidor:
 
 
     def PRNT(self,conexao,username):
+        print('entrou em PRNT')
 
         if self.tratamento_PRNT(username) == username:
             jogador = Player(username,conexao)
@@ -108,6 +110,7 @@ class Servidor:
         
         
     def tratamento_PRNT(self,username):
+        print('entrou em tratamento_PRNT')
         if len(username) == 0:
             return "ERRO: Nome não pode ser vazio"
         
@@ -118,11 +121,22 @@ class Servidor:
         
     
     def existeUsername(self,username):
-        for i in range(1,len(self.lista)+1):
-            if self.lista.elemento(i).name == username:
+        if self.lista.existe(username):
+            return False
+        
+
+        print(self.lista)
+        if self.lista.esta_vazia():
+            return False
+            
+        
+        for i in range(1,len(self.lista)):
+            print(f'username: {self.lista.elemento(i)}')
+            if self.lista.elemento(i) == username:
                 return True
         return False
 
+        
     def send_message(self, message:str,conexao):
         return conexao.send(message.encode())
     
@@ -131,7 +145,7 @@ class Servidor:
         self.send_message("200 OK: Desconectando",conexao)
         if jogador:
             self.lista.remover_elemento(jogador)
-            print(f'Jogador {jogador.name} removido da lista')
+            print(f'Jogador {jogador} removido da lista')
         conexao.close()
         return "Conexão encerrada"
     
@@ -149,7 +163,8 @@ class Servidor:
         return jogador
     
     def RSPT(self,resposta, tema, conexao, jogador):
-        resposta = Tentativa(jogador, resposta, tema)
+        tema = tema.lower()
+        resposta = Tentativa(jogador, resposta)
         self.hashtentantivas[tema].append(resposta)
         jogador.palavras.append(resposta)
         self.send_message("200 OK: Recebi sua resposta",conexao)
