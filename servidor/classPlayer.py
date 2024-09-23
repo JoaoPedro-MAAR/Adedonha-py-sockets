@@ -3,3 +3,4 @@ class Player:
         self.name = name
         self.socket = socket
         self.palavras = []
+        self.pontuacao = 0
