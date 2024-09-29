@@ -1,22 +1,161 @@
 import socket
 import threading
-
+import time 
+import curses
+import multiprocessing
+from threading import Thread
 
 class Jogador:
     def __init__(self,hostandport: tuple):
+        self.server = hostandport
         self.cliente = socket.socket(socket.AF_INET,socket.SOCK_STREAM)
-        self.cliente.connect(hostandport)
+        self.lock = multiprocessing.Lock()
+        self.estado = ['inicial','jogo','votacao','quadro_lideres']
+        self.estado_index = 0
+        self.stdscr = None
+        self.temas = ['nome','animal','cidade','objeto']
         
         
        
         
     def send_msg(self,mensagem: str):
         self.cliente.send(mensagem.encode())
+    
+    
         
         
     def recv_msg(self):
-        print(self.cliente.recv(1024).decode())
+        lasty , lastx = self.stdscr.getmaxyx()
+        self.msg_box = curses.newwin(lasty-3,lastx,0,0)
+        self.msg_box.clear()
+        self.msg_box.scrollok(True)
+        self.msg_box.addstr(f'Conectado ao servidor\n Digite "sair" para sair ou se cadastre com seu username\n')
+        self.msg_box.refresh()
+        while True:
+            msg = self.cliente.recv(1024)
+            if not msg:
+                break
+            self.lock.acquire()
+            try:
+                self.tratamento_de_mensagem(msg.decode())
+                
+                #Captura a mensagem e bota na tela no 0,0(começo da tela)
+                self.msg_box.refresh()
+                self.input_box.refresh()
+            finally:
+                self.lock.release()
+                
+    def tratamento_de_mensagem(self,mensagem:str):
+        """Função que trata a mensagem recebida do servidor
 
+        Args:
+            mensagem (string): mensagem recebida do servidor
+        """
+        codigo = mensagem.split(' ')
+        
+        if codigo[0] == '200':
+            self.tratamento_200(mensagem)
+                    
+    def tratamento_200(self,mensagem:str):
+        try:
+            mensagem = mensagem.split(':')
+            if mensagem[-1] == '0':
+                self.estado_index = 0
+                self.msg_box.clear()
+                self.msg_box.addstr(f'{self.estado[self.estado_index].upper()}>Você é o {mensagem[1]} jogador a entrar \n Mande um START para começar o jogo\n')   
+                self.msg_box.refresh()
+            elif mensagem[-1] == '1':
+                self.estado_index = 1
+                self.msg_box.clear()
+                self.msg_box.addstr(f'{self.estado[self.estado_index]}>Jogo iniciado a letra é {mensagem[1]} \n Para responder digite o tema mais resposta \n Os temas são: {self.temas[0]},{self.temas[1]},{self.temas[2]},{self.temas[3]}\n')
+                self.msg_box.refresh()
+            elif mensagem[-1] == '2':
+                self.estado_index = 2
+                self.msg_box.addstr(f'{self.estado[self.estado_index]}>Votação iniciada \n')
+                self.msg_box.refresh()
+            elif mensagem[-1] == '3':
+                self.estado_index = 3
+                self.msg_box.addstr(f'{self.estado[self.estado_index]}>Quadro de líderes \n')
+                self.msg_box.refresh()
+        except Exception as e:
+            print(f"Erro ao tratar mensagem 200: {e}")
+            self.msg_box.addstr(f'Erro ao tratar mensagem 200: {e}\n')
+            self.msg_box.refresh()                        
+        
+    def input(self, stdscr):
+        self.stdscr = stdscr
+        self.stdscr.clear()
+        curses.echo()
+        lasty , lastx = self.stdscr.getmaxyx()
+        self.input_box = curses.newwin(2,lastx, lasty-2,0)
+        t = Thread(target=self.recv_msg).start()
+        try:
+            while True:
+                self.lock.acquire()
+                try:
+                    self.input_box.clear()
+                    self.input_box.addstr(self.input_estado())
+                    self.input_box.refresh()
+                finally:
+                    self.lock.release()
+                try:
+                    msg = self.input_box.getstr().decode()
+                    if msg.lower() == "sair":
+                        try:
+                            t.interrupt_main()               
+                            self.cliente.close()
+                            
+                        except: pass
+                        break
+                    else:
+                        msg = self.tratamento_mensagem_com_estado(msg)
+                        self.send_msg(msg)
+                except:pass
+        except Exception as e:
+            self.stdscr.clear()
+            self.stdscr.addstr(0,0,f"Erro na conexão: {e}")
+            self.stdscr.refresh()
+            print(f"Erro na conexão: {e}")
+            self.cliente.close()
+            self.stdscr.addstr("Conexão encerrada")
+            self.stdscr.refresh()
+    
+    def tratamento_mensagem_com_estado(self,mensagem:str):
+        
+        if self.estado_index == 0:
+            if mensagem == "start":
+                return 'start'
+            return f'prnt {mensagem}'
+
+        elif self.estado_index == 1:
+            return f'rspt {mensagem}'
+        elif self.estado_index == 2:
+            return f'rspt {mensagem}'
+        elif self.estado_index == 3:
+            return f'prnt {mensagem}'
+    
+    def input_estado(self):
+        if self.estado_index == 0:
+            return f'Digite aqui>'
+        elif self.estado_index == 1:
+            return f'Escreva sua resposta>'
+        elif self.estado_index == 2:
+            return f'Escreva a sua resposta>'
+        elif self.estado_index == 3:
+            return f'Faz oque tu quiser doidao>'
+    
+    def start(self):
+        print('start')
+        try:
+            self.cliente.connect(self.server)
+            curses.wrapper(self.input)
+        except OSError as e:
+            print(f"Erro ao iniciar curses: {e}")
+            self.cliente.close()
+        
+        
+        
+        
     def listen_continuo(self):
         while True:
             self.recv_msg()

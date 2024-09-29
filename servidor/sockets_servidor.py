@@ -20,7 +20,8 @@ class Servidor:
         self.hashTemas.put('animal',[])
         self.hashTemas.put('cidade',[])
         self.hashTemas.put('objeto',[])
-        self.estado = 'inicial'
+        self.estado = ['inicial','jogo','votacao','quadro_lideres']
+        self.estado_index = 0
         self.listen_server_to_accept(TAMANHO_MAXIMO)
         
         
@@ -65,44 +66,42 @@ class Servidor:
         codigo  = resto_mensagem[0]
         print(f'codigo: {codigo}')
         
-        match codigo.lower():
+        codigo_lower = codigo.lower()
 
-            case "prnt":
-                if self.estado == 'inicial':
-                    if jogador:
-                        return [self.send_message("ERRO: Você já está registrado",conexao), jogador]
-                    jogador = self.PRNT(conexao,resto_mensagem[1])
-                    return ['tentativa de registrar jogador', jogador]
-                else:
-                    return [self.send_message("ERRO: Não é possivel",conexao), jogador]
-            
-            case "sair":
-                return [self.SAIR(conexao, jogador), jogador]
-            
-            case 'start':
-                if self.estado == 'inicial':
-                    return [self.START(conexao, jogador), jogador]
-                return [self.send_message("ERRO: Não é possivel",conexao), jogador]
-            
-            
-            case "rspt":
-                self.RSPT(resto_mensagem[1], resto_mensagem[2], conexao, jogador)
+        if codigo_lower == "prnt":
+            if self.estado[self.estado_index] == 'inicial':
+                if jogador:
+                    return [self.send_message("ERRO: Você já está registrado", conexao), jogador]
+                jogador = self.PRNT(conexao, resto_mensagem[1])
+                return ['tentativa de registrar jogador', jogador]
+            else:
+                return [self.send_message("ERRO: Não é possivel", conexao), jogador]
 
-                if self.finaliza_partida():
-                     for i in range(1,len(self.lista)+1):
-                        p = self.lista.elemento(i)
-                        self.send_message("200 OK: Todos responderam", p.socket)
-                return [f'200 OK: Todos responderam', jogador]
-                
-            
-            case "stop":
-                return [self.send_message("RECEBI SEU STOP",conexao), jogador]
-            
-            case "voto":
-                return [self.send_message("RECEBI SEU VOTO",conexao), jogador]
-            
-            case _:
-                return [self.send_message("ERRO: Comando não reconhecido",conexao), jogador]
+        elif codigo_lower == "sair":
+            return [self.SAIR(conexao, jogador), jogador]
+
+        elif codigo_lower == 'start':
+            if self.estado[self.estado_index] == 'inicial':
+                return [self.START(conexao, jogador), jogador]
+            return [self.send_message("ERRO: Não é possivel", conexao), jogador]
+
+        elif codigo_lower == "rspt":
+            self.RSPT(resto_mensagem[1], resto_mensagem[2], conexao, jogador)
+
+            if self.finaliza_partida():
+                for i in range(1, len(self.lista) + 1):
+                    p = self.lista.elemento(i)
+                self.send_message("200 OK: Todos responderam", p.socket)
+            return [f'200 OK: Todos responderam', jogador]
+
+        elif codigo_lower == "stop":
+            return [self.send_message("RECEBI SEU STOP", conexao), jogador]
+
+        elif codigo_lower == "voto":
+            return [self.send_message("RECEBI SEU VOTO", conexao), jogador]
+
+        else:
+            return [self.send_message("ERRO: Comando não reconhecido", conexao), jogador]
 
 
     def PRNT(self,conexao,username):
@@ -113,7 +112,7 @@ class Servidor:
             self.lista.append(jogador)
             print(f'Jogador {username} adicionado a lista')
             print(self.lista)
-            self.send_message(f'200 OK: Você é o {len(self.lista)} jogador a ficar pronto! ',conexao)
+            self.send_message(f'200 OK:{len(self.lista)}:{self.estado_index}',conexao)
             return jogador
         else:
             self.send_message(f'{self.tratamento_PRNT(username)}',conexao)
@@ -162,24 +161,22 @@ class Servidor:
     
 
     def START(self,conexao, jogador):
+        print('entrou em START')
+        letra = 'C'
         for i in range(1,len(self.lista)+1):
             p = self.lista.elemento(i)
-            self.send_message("200 OK: Recebi seu START", p.socket)
+            self.send_message(f"200 OK:{letra}:1", p.socket)
 
-            self.send_message("""
-                        A letra selecionada é a letra 'C'
-                        Os temas são: Nome, Animal, Cidade, Objeto
-                        """, p.socket)
-            self.send_message("Digite 'RSPT' para responder", p.socket)
-        self.estado = 'jogando'
+        self.estado_index = 1                                                           
         return jogador
     
     def RSPT(self,resposta, tema, conexao, jogador):
         tema = tema.lower()
         resposta = Tentativa(jogador, resposta)
-        self.hashtentantivas[tema].append(resposta)
+        self.hashTemas[tema].append(resposta)
         jogador.palavras.append(resposta)
-        self.send_message("200 OK: Recebi sua resposta",conexao)
+        self.send_message("200 OK",conexao)
+        #Representa que o Jogador respondeu
         return jogador
     
 

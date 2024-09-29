@@ -98,7 +98,13 @@ class Lista:
         except ListaError:
             return False
 
-        
+    def remover_elemento(self, carga:any)->any:
+        '''
+        Método que recebe uma carga e remove o primeiro elemento
+        que contém a carga
+        '''
+        posicao = self.busca(carga)
+        return self.remover(posicao)    
 
     def __str__(self)->str:
         s = 'lista->[ '
