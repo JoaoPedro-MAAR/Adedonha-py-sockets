@@ -7,6 +7,7 @@ class Jogador:
         self.cliente = socket.socket(socket.AF_INET,socket.SOCK_STREAM)
         self.cliente.connect(hostandport)
         
+        
        
         
     def send_msg(self,mensagem: str):

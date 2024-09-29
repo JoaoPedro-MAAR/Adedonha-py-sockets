@@ -1,5 +1,5 @@
 class Tentativa:
-    def __init__ (self,user,palavra):
+    def __init__ (self,user:object,palavra):
         self.nome = [user]
         self.palavra = palavra.lower()
         self.pontos = 0

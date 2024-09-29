@@ -1,29 +1,32 @@
 import socket
 import threading
 from utilities import separaProtocolo_Aplicacao
-from listaEncadeada import Lista as l 
+from listaSequencial import Lista as l 
 from classPlayer import Player
 from classTentativa import Tentativa
-
+from Hashtable import HashTable
 
   
   
-
+TAMANHO_MAXIMO = 10
 
 class Servidor:
     def __init__(self,HOST,PORT):
-        self.lista = l()
+        self.lista = l(TAMANHO_MAXIMO)
         self.server = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         self.server.bind((HOST, PORT))
-        self.hashtentantivas = {
-            'nome':[],
-            'animal':[],
-            'cidade':[],
-            'objeto':[]
-        }
-        self.listen_server_to_accept(10)
+        self.hashTemas = HashTable()
+        self.hashTemas.put('nome',[])
+        self.hashTemas.put('animal',[])
+        self.hashTemas.put('cidade',[])
+        self.hashTemas.put('objeto',[])
+        self.estado = 'inicial'
+        self.listen_server_to_accept(TAMANHO_MAXIMO)
         
-       
+        
+        
+    
+        
         
     def listen_server_to_accept(self, n: int = 10):
         self.server.listen(n)
@@ -65,14 +68,22 @@ class Servidor:
         match codigo.lower():
 
             case "prnt":
-                jogador = self.PRNT(conexao,resto_mensagem[1])
-                return ['tentativa de registrar jogador', jogador]
+                if self.estado == 'inicial':
+                    if jogador:
+                        return [self.send_message("ERRO: Você já está registrado",conexao), jogador]
+                    jogador = self.PRNT(conexao,resto_mensagem[1])
+                    return ['tentativa de registrar jogador', jogador]
+                else:
+                    return [self.send_message("ERRO: Não é possivel",conexao), jogador]
             
             case "sair":
                 return [self.SAIR(conexao, jogador), jogador]
             
             case 'start':
-                return [self.START(conexao, jogador), jogador]
+                if self.estado == 'inicial':
+                    return [self.START(conexao, jogador), jogador]
+                return [self.send_message("ERRO: Não é possivel",conexao), jogador]
+            
             
             case "rspt":
                 self.RSPT(resto_mensagem[1], resto_mensagem[2], conexao, jogador)
@@ -160,6 +171,7 @@ class Servidor:
                         Os temas são: Nome, Animal, Cidade, Objeto
                         """, p.socket)
             self.send_message("Digite 'RSPT' para responder", p.socket)
+        self.estado = 'jogando'
         return jogador
     
     def RSPT(self,resposta, tema, conexao, jogador):
