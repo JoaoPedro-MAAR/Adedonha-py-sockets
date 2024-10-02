@@ -33,7 +33,7 @@ Para jogar Adedonha, basta executar o projeto e seguir as instruções na interf
 
 1. Clone este repositório:
    ```bash
-
+      https://github.com/JoaoPedro-MAAR/Adedonha-py-sockets
 
 
 
