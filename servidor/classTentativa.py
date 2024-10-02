@@ -3,7 +3,7 @@ class Tentativa:
         self.nome = [user]
         self.palavra = palavra.lower()
         self.pontos = 0
-        self.valid = False
+        self.valid = True
     def __str__(self):
         return f'{self.nome} : {self.palavra}'
 
@@ -19,6 +19,9 @@ class Tentativa:
     
     def getisValid(self):
         return self.valid
+    
+    def invalidar(self):
+        self.valid = False
     
     def submit_points(self):
         if self.getisValid():
