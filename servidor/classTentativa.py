@@ -32,4 +32,8 @@ class Tentativa:
         if value.getPalavra() == self.getPalavra():
             return True
         return False
+
+
+    def __str__(self):
+        return f'{self.palavra}'
     
