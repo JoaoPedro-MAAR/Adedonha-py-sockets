@@ -8,8 +8,8 @@ from classTentativa import Tentativa
 from Hashtable import HashTable
 import random
 import string
-import asyncio
-
+import time
+from classGame import Game
 
   
   
@@ -21,14 +21,7 @@ class Servidor:
         self.lock = multiprocessing.Lock()
         self.server = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         self.server.bind((HOST, PORT))
-        self.hashTemas = HashTable()
-        self.hashTemas.put('nome',[])
-        self.hashTemas.put('animal',[])
-        self.hashTemas.put('cidade',[])
-        self.hashTemas.put('objeto',[])
-        self.temas = ['nome','animal','cidade','objeto']
-        self.estado = ['inicial','jogo','votacao','quadro_lideres']
-        self.estado_index = 0
+        self.game = Game(self.lista)
         self.listen_server_to_accept(TAMANHO_MAXIMO)
         
         
@@ -53,19 +46,23 @@ class Servidor:
                 if not message:
                     break
                 print(f'mensagem clientes: {message}')
+                self.lock.acquire()
                 resposta, jogador = self.message_treatment(message, conexao_estabelecida, jogador)
                 if resposta == "Conexão encerrada":
                     break
                 if resposta == 2:
                     threading.Thread(target=self.startVotacao).start()
+                self.lock.release()
         
         except Exception as e:
             print(f"Erro na conexão com {addr}: {e}")
+            self.lock.release()
         finally:
             if jogador:
                 self.lista.remover_elemento(jogador)
             conexao_estabelecida.close()
             print(f"Conexão com {addr} encerrada.")
+            self.lock.release()
 
 
     def read_message(self,conexao):
@@ -103,9 +100,9 @@ class Servidor:
                 self.estado_index = 2
                 for i in range(1, len(self.lista) + 1):
                     p = self.lista.elemento(i)
-                    self.send_message(f"200 OK:{self.estado_index}", p.socket)
+                    self.send_message(f"200:{self.estado_index}", p.socket)
                 return [2, jogador]
-            return [f'200 OK: Resposta registrada', jogador]
+            return [f'200: Resposta registrada', jogador]
 
         elif codigo_lower == "stop":
             return [self.send_message("RECEBI SEU STOP", conexao), jogador]
@@ -121,11 +118,8 @@ class Servidor:
         print('entrou em PRNT')
 
         if self.tratamento_PRNT(username) == username:
-            jogador = Player(username,conexao)
-            self.lista.append(jogador)
-            print(f'Jogador {username} adicionado a lista')
-            print(self.lista)
-            self.send_message(f'200 OK:{len(self.lista)}:{self.estado_index}',conexao)
+            jogador, estado = self.game.registrar(conexao,username)
+            self.send_message(f'200:{len(self.lista)}:{estado}',conexao)
             return jogador
         else:
             self.send_message(f'{self.tratamento_PRNT(username)}',conexao)
@@ -144,8 +138,9 @@ class Servidor:
         
     
     def existeUsername(self,username):
-        if self.lista.existe(username):
-            return False
+        for i in range(1,len(self.lista)+1):
+            if self.lista.elemento(i).name == username:
+                return True
         
 
         print(self.lista)
@@ -165,12 +160,14 @@ class Servidor:
         return conexao.send(message.encode())
 
 
-    def letra_aleatoria(self):
-        return random.choice(string.ascii_uppercase)    
+    def send_broadcast(self, message:str):
+        for i in range(1,len(self.lista)+1):
+            p = self.lista.elemento(i)
+            self.send_message(message, p.socket)
 
 
     def SAIR(self,conexao, jogador):
-        self.send_message("200 OK: Desconectando",conexao)
+        self.send_message("200: Desconectando",conexao)
         if jogador:
             self.lista.remover_elemento(jogador)
             print(f'Jogador {jogador} removido da lista')
@@ -180,20 +177,20 @@ class Servidor:
 
     def START(self,conexao, jogador):
         print('entrou em START')
-        letra = self.letra_aleatoria()
+        estado, letra = self.game.START()
         for i in range(1,len(self.lista)+1):
             p = self.lista.elemento(i)
-            self.send_message(f"200 OK:{letra}:1", p.socket)
+            self.send_message(f"200:{letra}:{estado}", p.socket)
 
         self.estado_index = 1                                                           
         return jogador
     
+    
+    
+    
     def RSPT(self,resposta, tema, conexao, jogador):
-        tema = tema.lower()
-        resposta = Tentativa(jogador, resposta)
-        self.hashTemas[tema].append(resposta)
-        jogador.palavras.append(resposta)
-        self.send_message("200 OK",conexao)
+        estado = self.game.resposta(resposta, tema, conexao, jogador)
+        self.send_message(f"200,{estado}",conexao)
         #Representa que o Jogador respondeu
         return jogador
     
@@ -206,21 +203,26 @@ class Servidor:
         return True
     
     def startVotacao(self):
+        estado, temas, hashTemas = self.game.startVotacao()
         for j in range(4):
-            respostas = self.hashTemas[self.temas[j]]
+            respostas = hashTemas[temas[j]]
             for i in range(1,len(self.lista)+1):
                 jogador = self.lista.elemento(i)
-                self.send_message(f"200 OK:{self.temas[j]}:{respostas}:{self.estado_index}", jogador.socket)
+                self.send_message(f"200:{temas[j]}:{respostas}:{estado}", jogador.socket)
+            time.sleep(30)
           
+        estado = self.game.quadro_lideres()
+        self.send_broadcast(f"200:{estado}")
+        time.sleep(1)
+        lideres = self.game.getLideres()
         
-        for i in range(4):
-            respostas = self.hashTemas[self.temas[i]]
-            for j in range(len(respostas)):
-                respostas[j].submit_points()
+        
         return jogador
     
     def VOTO(self, voto,conexao, jogador):
-        tema = voto[0]
-        for i in range(1,len(voto)+1):
-            self.hashTemas[tema][voto[i]].invalidar()
+        estado = self.game.VOTO(voto,conexao, jogador)
+        self.send_message(f"200:{estado}",conexao)
+        
+    
+    
                 

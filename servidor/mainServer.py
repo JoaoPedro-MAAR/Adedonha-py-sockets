@@ -1,7 +1,8 @@
 from sockets_servidor import Servidor
 
-HOST =  'localhost'
-PORT = 8081
+
+HOST = ''
+PORT = 8089
 post = (HOST,PORT)
 
 Servidor(HOST,PORT)
