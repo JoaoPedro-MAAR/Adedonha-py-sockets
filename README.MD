@@ -1,4 +1,13 @@
- Adedonha-py-sockets
+Título do projeto:Adedonha-py-socket
+Autores: João Pedro Marques araujo.aragao@academico.ifpb.edu.br , Andrey Coutinho andrey.coutinho@academico.ifpb.edu.br;
+Disciplinas: Estrutura de dados e Protocolos de rede
+Descrição do problema:Prover um ambiente virtual visado na diversão usando o famoso jogo de adedonha
+Arquivos do Projeto:
+Pré-requisitos para execução:curses instalado, time instalado, python 3.9> instalado, threading instalado 
+Protocolo da Aplicação: Text GAME
+Instruções para execução:Roda o mainServidor.py e depois o mainCliente.py
+
+Adedonha-py-sockets
 
 Um projeto que simula virtualmente o jogo de Adedonha, permitindo interações através de comandos.
 
