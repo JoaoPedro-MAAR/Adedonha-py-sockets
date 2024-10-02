@@ -161,10 +161,11 @@ class Servidor:
 
         
     def send_message(self, message:str,conexao):
+        print(message)
         return conexao.send(message.encode())
 
 
-    def letra_aleatoria():
+    def letra_aleatoria(self):
         return random.choice(string.ascii_uppercase)    
 
 
@@ -209,8 +210,8 @@ class Servidor:
             respostas = self.hashTemas[self.temas[j]]
             for i in range(1,len(self.lista)+1):
                 jogador = self.lista.elemento(i)
-                self.send_message(f"200 OK:{self.temas[j]}:{respostas}", jogador.socket)
-            asyncio.sleep(30)
+                self.send_message(f"200 OK:{self.temas[j]}:{respostas}:{self.estado_index}", jogador.socket)
+          
         
         for i in range(4):
             respostas = self.hashTemas[self.temas[i]]

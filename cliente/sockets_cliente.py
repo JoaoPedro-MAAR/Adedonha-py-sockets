@@ -27,6 +27,7 @@ class Jogador:
        
         
     def send_msg(self,mensagem: str):
+        print(mensagem)
         self.cliente.send(mensagem.encode())
     
     
@@ -59,9 +60,9 @@ class Jogador:
         Args:
             mensagem (string): mensagem recebida do servidor
         """
-        codigo = mensagem.split(' ')
+        codigo = mensagem.split(':')
         
-        if codigo[0] == '200':
+        if codigo[0] == '200 OK':
             self.tratamento_200(mensagem)
             
     
