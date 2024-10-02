@@ -25,7 +25,7 @@ Para jogar Adedonha, basta executar o projeto e seguir as instruções na interf
 
 ### Requisitos
 
-- Python 3.9
+- Python 3.9 ou maior 
 - Curses
 - time
 - threading
@@ -35,5 +35,7 @@ Para jogar Adedonha, basta executar o projeto e seguir as instruções na interf
    ```bash
       https://github.com/JoaoPedro-MAAR/Adedonha-py-sockets
 
+2. Classes 
+   
 
 
