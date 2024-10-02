@@ -103,9 +103,9 @@ class Servidor:
                 self.estado_index = 2
                 for i in range(1, len(self.lista) + 1):
                     p = self.lista.elemento(i)
-                    self.send_message(f"200 OK:{self.estado_index}", p.socket)
+                    self.send_message(f"200:{self.estado_index}", p.socket)
                 return [2, jogador]
-            return [f'200 OK: Resposta registrada', jogador]
+            return [f'200: Resposta registrada', jogador]
 
         elif codigo_lower == "stop":
             return [self.send_message("RECEBI SEU STOP", conexao), jogador]
@@ -125,7 +125,7 @@ class Servidor:
             self.lista.append(jogador)
             print(f'Jogador {username} adicionado a lista')
             print(self.lista)
-            self.send_message(f'200 OK:{len(self.lista)}:{self.estado_index}',conexao)
+            self.send_message(f'200:{len(self.lista)}:{self.estado_index}',conexao)
             return jogador
         else:
             self.send_message(f'{self.tratamento_PRNT(username)}',conexao)
@@ -170,7 +170,7 @@ class Servidor:
 
 
     def SAIR(self,conexao, jogador):
-        self.send_message("200 OK: Desconectando",conexao)
+        self.send_message("200: Desconectando",conexao)
         if jogador:
             self.lista.remover_elemento(jogador)
             print(f'Jogador {jogador} removido da lista')
@@ -183,7 +183,7 @@ class Servidor:
         letra = self.letra_aleatoria()
         for i in range(1,len(self.lista)+1):
             p = self.lista.elemento(i)
-            self.send_message(f"200 OK:{letra}:1", p.socket)
+            self.send_message(f"200:{letra}:1", p.socket)
 
         self.estado_index = 1                                                           
         return jogador
@@ -193,7 +193,7 @@ class Servidor:
         resposta = Tentativa(jogador, resposta)
         self.hashTemas[tema].append(resposta)
         jogador.palavras.append(resposta)
-        self.send_message("200 OK",conexao)
+        self.send_message("200",conexao)
         #Representa que o Jogador respondeu
         return jogador
     
@@ -210,7 +210,7 @@ class Servidor:
             respostas = self.hashTemas[self.temas[j]]
             for i in range(1,len(self.lista)+1):
                 jogador = self.lista.elemento(i)
-                self.send_message(f"200 OK:{self.temas[j]}:{respostas}:{self.estado_index}", jogador.socket)
+                self.send_message(f"200:{self.temas[j]}:{respostas}:{self.estado_index}", jogador.socket)
           
         
         for i in range(4):

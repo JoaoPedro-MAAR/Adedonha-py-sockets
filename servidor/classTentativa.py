@@ -4,6 +4,7 @@ class Tentativa:
         self.palavra = palavra.lower()
         self.pontos = 0
         self.valid = True
+        self.votos = 0
     def __str__(self):
         return f'{self.nome} : {self.palavra}'
 
@@ -17,11 +18,16 @@ class Tentativa:
     def getPalavra(self):
         return self.palavra
     
+    def VoteINVD(self):
+        self.votos += 1
+    
     def getisValid(self):
         return self.valid
     
-    def invalidar(self):
-        self.valid = False
+    def invalidar(self,quantidade_jogadores):
+        if self.votos == (quantidade_jogadores // 2)+1:
+            self.valid = False
+                    
     
     def submit_points(self):
         if self.getisValid():
