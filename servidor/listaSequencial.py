@@ -97,6 +97,8 @@ class Lista:
             return True
         except ListaError:
             return False
+        
+    
 
     def remover_elemento(self, carga:any)->any:
         '''

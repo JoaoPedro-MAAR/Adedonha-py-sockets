@@ -4,6 +4,11 @@ import time
 import curses
 import multiprocessing
 from threading import Thread
+from treatments import TratamentosFROMServer
+from Hashtable import HashTable
+
+#Ainda sera modularizado em classes, as classes serão separadas em arquivos diferentes e importadas aqui
+
 
 class Jogador:
     def __init__(self,hostandport: tuple):
@@ -14,6 +19,9 @@ class Jogador:
         self.estado_index = 0
         self.stdscr = None
         self.temas = ['nome','animal','cidade','objeto']
+        self.hashTemas = HashTable()
+        
+        
         
         
        
@@ -55,6 +63,8 @@ class Jogador:
         
         if codigo[0] == '200':
             self.tratamento_200(mensagem)
+            
+    
                     
     def tratamento_200(self,mensagem:str):
         try:
@@ -71,7 +81,9 @@ class Jogador:
                 self.msg_box.refresh()
             elif mensagem[-1] == '2':
                 self.estado_index = 2
-                self.msg_box.addstr(f'{self.estado[self.estado_index]}>Votação iniciada \n')
+                self.msg_box.addstr(f'{self.estado[self.estado_index]}>Votação iniciada\n')
+                self.msg_box.addstr(f'{print(mensagem[2])} Essas são as palavras do tema {mensagem[1]}\n')
+                self.msg_box.addstr(f'Vote nas respostas invalidas se houver mais de uma resposta invalida separe por virgula r1,r2,r3\n')
                 self.msg_box.refresh()
             elif mensagem[-1] == '3':
                 self.estado_index = 3
@@ -109,6 +121,8 @@ class Jogador:
                         break
                     else:
                         msg = self.tratamento_mensagem_com_estado(msg)
+                        if msg == None:
+                            continue
                         self.send_msg(msg)
                 except:pass
         except Exception as e:
@@ -128,9 +142,40 @@ class Jogador:
             return f'prnt {mensagem}'
 
         elif self.estado_index == 1:
-            return f'rspt {mensagem}'
+            if mensagem.split()[-1] not in self.temas and mensagem.split()[0] != 'stop':
+                self.msg_box.addstr(f'Tema inválido\n')
+                return None
+            if mensagem.split()[-1] in self.temas:
+                try:
+                    self.hashTemas.put(mensagem.split()[-1],mensagem.split()[0])
+                    self.msg_box.addstr(f'{mensagem.split()[-1]}: {mensagem.split()[0]}\n')
+                    self.msg_box.refresh()
+                    return None
+                except Exception as e:
+                    print(f"Erro ao inserir tema {e}")
+                    self.msg_box.addstr(f'Erro ao inserir tema na : {e}\n')
+                    self.msg_box.refresh()
+                    return None
+            if mensagem == "stop":
+                self.msg_box.addstr(f'Jogo encerrado\n')
+                self.msg_box.refresh()
+                for i in range(len(self.temas)):
+                    tema_now = self.temas[i]
+                    associado = self.hashTemas.get(tema_now.lower())
+                    self.send_msg(f'rspt {associado} {tema_now}')
+                    time.sleep(0.1)
+                return None
         elif self.estado_index == 2:
-            return f'rspt {mensagem}'
+            if ',' not in mensagem:
+                return f'invld {mensagem}'
+            mensagem = mensagem.split(',')
+            for i in range(len(mensagem)):
+                mensagem[i] = mensagem[i].strip()
+                self.send_msg(f'invld {mensagem[i]}')
+                time.sleep(0.1)
+            return None
+                
+        
         elif self.estado_index == 3:
             return f'prnt {mensagem}'
     
