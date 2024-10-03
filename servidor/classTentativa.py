@@ -28,6 +28,9 @@ class Tentativa:
     def getisValid(self):
         return self.valid
     
+    def votar(self):
+        self.votos += 1
+    
     def invalidar(self, qtdePlayers):
         if self.votos > qtdePlayers/2:
             self.valid = False

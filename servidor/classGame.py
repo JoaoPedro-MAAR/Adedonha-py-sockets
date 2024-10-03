@@ -66,7 +66,7 @@ class Game:
     def VOTO(self, voto,conexao, jogador):
         tema = voto[0]
         for i in range(1,len(voto)+1):
-            self.hashTemas[tema][voto[i]].invalidar()
+            self.hashTemas[tema][voto[i]].votar()
     
     
     def quadro_lideres(self):

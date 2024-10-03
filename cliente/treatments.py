@@ -116,19 +116,12 @@ class Tratamentos:
 
         elif estado == 2:
             if ',' in mensagem:
-                array_de_mensagem = mensagem.strip().split(',')
-                for i in range(len(array_de_mensagem)):
-                    internal_text = array_de_mensagem[i].strip()
-                    new_internal_text = 'invld:'+self.get_TemaAtual()+':' + internal_text
-                    array_de_mensagem[i] = new_internal_text
-            else:
-                return 'invld:'+self.get_TemaAtual()+':'+mensagem
+                
 
 
 
-
-                return 'votos',array_de_mensagem
-            return f'invld {mensagem}',True
+            
+    
                
             
     

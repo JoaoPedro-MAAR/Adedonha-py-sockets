@@ -54,9 +54,15 @@ class Jogador:
                 self.msg_box.addstr(new_message)
                 #Captura a mensagem e bota na tela no 0,0(começo da tela)
                 self.msg_box.refresh()
-                self.input_box.refresh()
+                self.input_box.refresh() 
+                
+            except Exception as e:
+                self.msg_box.addstr(f'Erro ao receber mensagem')
+                self.msg_box.refresh()
+            
             finally:
                 self.lock.release()
+            
                                   
         
     def input(self, stdscr):
