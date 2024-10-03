@@ -61,8 +61,7 @@ class Servidor:
                 self.lista.remover_elemento(jogador)
             conexao_estabelecida.close()
             print(f"Conexão com {addr} encerrada.")
-            if self.lock.locked():
-                self.lock.release()
+            
 
 
     def read_message(self,conexao):
@@ -79,7 +78,7 @@ class Servidor:
         if codigo_lower == "prnt":
             if self.game.getEstado() == 'inicial':
                 if jogador:
-                    return [self.send_message("ERRO: Você já está registrado", conexao), jogador]
+                    return [self.send_message(f"402:{self.game.getEstadoIndex()}", conexao), jogador]
                 jogador = self.PRNT(conexao, resto_mensagem[1])
                 return ['tentativa de registrar jogador', jogador]
             else:
@@ -175,11 +174,9 @@ class Servidor:
     def START(self,conexao, jogador):
         print('entrou em START')
         estado, letra = self.game.START()
-        for i in range(1,len(self.lista)+1):
-            p = self.lista.elemento(i)
-            self.send_message(f"200:{letra}:{estado}", p.socket)
-
-        self.estado_index = 1                                                           
+        
+        self.send_broadcast(f"200:{letra}:{estado}")
+                                                          
         return jogador
     
     
@@ -200,25 +197,29 @@ class Servidor:
         return True
     
     def startVotacao(self):
-        estado, temas, hashTemas = self.game.startVotacao()
+        estado, temas, hashTemas = self.game.startVotação()
         for j in range(4):
             respostas = hashTemas[temas[j]]
-            for i in range(1,len(self.lista)+1):
-                jogador = self.lista.elemento(i)
-                self.send_message(f"200:{temas[j]}:{respostas}:{estado}", jogador.socket)
-            time.sleep(30)
+            self.send_broadcast(f"200:{temas[j]}:{respostas}:{estado}")
+            #time.sleep(30)
           
         estado = self.game.quadro_lideres()
         self.send_broadcast(f"200:{estado}")
         time.sleep(1)
         lideres = self.game.getLideres()
-        
-        
-        return jogador
+        self.send_broadcast(f"200:{lideres}")
+        time.sleep(5)
+        self.end()
+        return
     
     def VOTO(self, voto,conexao, jogador):
         estado = self.game.VOTO(voto,conexao, jogador)
         self.send_message(f"200:{estado}",conexao)
+
+    
+    def end(self):
+        self.server.close()
+        print("Servidor encerrado")
         
     
     
