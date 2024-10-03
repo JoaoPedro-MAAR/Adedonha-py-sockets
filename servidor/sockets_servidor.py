@@ -202,8 +202,9 @@ class Servidor:
         str_respostas = ''
         for j in range(4):
             respostas = hashTemas[temas[j]]
-            str_respostas += str(respostas)
-            self.send_broadcast(f"200:{temas[j]}:{respostas}:{estado}")
+            str_respostas = self.ArrayObjectsToString(respostas)
+            print(str_respostas)
+            self.send_broadcast(f"200:{temas[j]}:{str_respostas}:{estado}")
             time.sleep(30)
             
           
@@ -215,6 +216,16 @@ class Servidor:
         time.sleep(5)
         self.end()
         return
+
+    
+    def ArrayObjectsToString(self,array)->str:
+        """
+        Função que transforma um array de objetos em uma string
+        """
+ 
+        return ' '.join(repr(obj) for obj in array)
+
+
     
     def handleInvalid(self, voto,conexao, jogador):
         estado = self.game.VOTO(voto,conexao, jogador)

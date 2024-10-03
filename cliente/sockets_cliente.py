@@ -103,7 +103,7 @@ class Jogador:
                             if msg == 'rspt':
                                 
                                 self.Mandar_array_em_forma_de_varias_mensagens(épara_o_server)
-                                self.msg_box.addstr("Respostas enviadas")
+                                
 
                             elif msg == 'votos':
                                 self.Mandar_array_em_forma_de_varias_mensagens(épara_o_server)

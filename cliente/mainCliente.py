@@ -1,7 +1,7 @@
 from sockets_cliente import Jogador
 
 HOST =  '10.0.73.56'
-PORT = 8080
+PORT = 8081
 post = (HOST,PORT)
 
 j1 = Jogador(post)

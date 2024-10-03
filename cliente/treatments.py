@@ -47,8 +47,9 @@ class Tratamentos:
                 estado_index = 2
                 self.temaAtual = mensagem[1]
                 respostasArray = mensagem[2]
-                respostasString = self.ArrayObjectsToString(respostasArray)
-                return f'{self.estado[estado_index]}>Votação iniciada\n {print(respostasString)} Essas são as palavras do tema :  {self.get_TemaAtual()}\n Vote nas respostas invalidas se houver mais de uma resposta invalida separe por virgula r1,r2,r3\n',estado_index
+                print(respostasArray)
+                
+                return f'{self.estado[estado_index]}>Votação iniciada\n {respostasArray} Essas são as palavras do tema :  {self.get_TemaAtual()}\n Vote nas respostas invalidas se houver mais de uma resposta invalida separe por virgula r1,r2,r3\n',estado_index
 
             elif mensagem[-1] == '3':
                 estado_index = 3
@@ -157,11 +158,17 @@ class Tratamentos:
 
 
 
+
     def ArrayObjectsToString(self,array)->str:
         """
         Função que transforma um array de objetos em uma string
         """
-        string = ''
-        for i in range(len(array)):
-            string += f'{str(array[i])} '
-        return string
+ 
+        return ' '.join(repr(obj) for obj in array)
+
+
+
+
+
+
+

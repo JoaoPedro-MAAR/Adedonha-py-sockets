@@ -1,5 +1,5 @@
 class Tentativa:
-    def __init__ (self,user:object,palavra):
+    def __init__ (self,user:str,palavra):
         self.nome = [user]
         self.palavra = palavra.lower()
         self.votos = 0
@@ -19,7 +19,8 @@ class Tentativa:
 
 
     def setNewPlayers(self,jogador: object):
-        self.nome.append(jogador) 
+        self.nome.append(jogador)
+        self.uptadePontos(5) 
         
     def uptadePontos(self,pontos):
         self.pontos = pontos
@@ -50,3 +51,6 @@ class Tentativa:
     def __str__(self):
         return f'{self.palavra}'
     
+
+
+
