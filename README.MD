@@ -164,6 +164,10 @@ Esta classe encapsula as informações e comportamentos básicos de um jogador c
 Esta classe ainda será modularizada em outras classes exemplo em jogador.py para ser a classe principal , Treatments.py para tratamento das mensagens que chegam do servidor e que saem do input do cliente , alem de outras funções menores
 
 
+Esrutura de dados usadas: Hashtable para guardar as palavras de acordo com o tema em um array ||| Lista sequencia para guarda os jogadores que entram no server
+
+
+
 
 
 
