@@ -1,3 +1,8 @@
+
+
+
+
+
 Título do projeto:Adedonha-py-socket
 
 Autores: João Pedro Marques araujo.aragao@academico.ifpb.edu.br , Andrey Coutinho andrey.coutinho@academico.ifpb.edu.br;
@@ -23,7 +28,6 @@ O **Adedonha-py-sockets** é uma implementação do popular jogo de palavras Ade
 - PRNT: Registrar-se no jogo.
 - RSPT: Enviar uma resposta.
 - INVLD: Invalidar a resposta de outro usuário.
-- STOP: Finalizar a rodada, concedendo uma vantagem ao jogador.
 - SAIR: Desconectar do jogo.
 
 O jogo possui diferentes estados, incluindo:
@@ -32,6 +36,24 @@ O jogo possui diferentes estados, incluindo:
 - Jogo
 - Votação
 - Quadro de Líderes
+
+Esse é o a lista de respostas do servidor : 
+
+
+200 Bem sucedido,temos um controle via estados da aplicação , acha bom que seria melhor ter mais 200?
+
+Erro do Cliente (4XX)
+400 Má requisição
+401 usuário já registrado
+403 Requisição negada
+404 tema não encontrado
+407 Partida já iniciada
+
+Erro de Servidor (5XX)
+500 Erro interno
+501 Problema de conexão
+502 Partida cancelada
+
 
  Uso
 
@@ -140,6 +162,11 @@ Esta classe encapsula as informações e comportamentos básicos de um jogador c
 
 
 Esta classe ainda será modularizada em outras classes exemplo em jogador.py para ser a classe principal , Treatments.py para tratamento das mensagens que chegam do servidor e que saem do input do cliente , alem de outras funções menores
+
+
+
+
+
 
 
 
