@@ -2,8 +2,11 @@ class Tentativa:
     def __init__ (self,user:object,palavra):
         self.nome = [user]
         self.palavra = palavra.lower()
-        self.pontos = 0
+        self.votos = 0
+        self.pontos = 10
         self.valid = True
+        
+        
     def __str__(self):
         return f'{self.nome} : {self.palavra}'
 
@@ -20,10 +23,12 @@ class Tentativa:
     def getisValid(self):
         return self.valid
     
-    def invalidar(self):
-        self.valid = False
+    def invalidar(self, qtdePlayers):
+        if self.votos > qtdePlayers/2:
+            self.valid = False
     
     def submit_points(self):
+        self.invalidar()
         if self.getisValid():
             for i in range(0,len(self.nome)):
                 self.nome[i].soma_pontos(self.pontos)
