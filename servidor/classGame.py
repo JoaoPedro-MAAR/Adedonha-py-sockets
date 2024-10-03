@@ -87,3 +87,8 @@ class Game:
             lideres.append(self.lista_players[i])
         lideres.sort(key=lambda x: x.pontuacao, reverse=True)
         return lideres[:3]
+    
+    def getEstado(self):
+        return self.estado[self.estado_index]
+    def getEstadoIndex(self):
+        return self.estado_index

@@ -56,13 +56,13 @@ class Servidor:
         
         except Exception as e:
             print(f"Erro na conexão com {addr}: {e}")
-            self.lock.release()
         finally:
             if jogador:
                 self.lista.remover_elemento(jogador)
             conexao_estabelecida.close()
             print(f"Conexão com {addr} encerrada.")
-            self.lock.release()
+            if self.lock.locked():
+                self.lock.release()
 
 
     def read_message(self,conexao):
@@ -77,7 +77,7 @@ class Servidor:
         codigo_lower = codigo.lower()
 
         if codigo_lower == "prnt":
-            if self.estado[self.estado_index] == 'inicial':
+            if self.game.getEstado() == 'inicial':
                 if jogador:
                     return [self.send_message("ERRO: Você já está registrado", conexao), jogador]
                 jogador = self.PRNT(conexao, resto_mensagem[1])
@@ -89,7 +89,7 @@ class Servidor:
             return [self.SAIR(conexao, jogador), jogador]
 
         elif codigo_lower == 'start':
-            if self.estado[self.estado_index] == 'inicial':
+            if self.game.getEstado() == 'inicial':
                 return [self.START(conexao, jogador), jogador]
             return [self.send_message("ERRO: Não é possivel", conexao), jogador]
 
@@ -97,10 +97,7 @@ class Servidor:
             self.RSPT(resto_mensagem[1], resto_mensagem[2], conexao, jogador)
 
             if self.finaliza_partida():
-                self.estado_index = 2
-                for i in range(1, len(self.lista) + 1):
-                    p = self.lista.elemento(i)
-                    self.send_message(f"200:{self.estado_index}", p.socket)
+                self.send_broadcast(f"200:{self.game.getEstadoIndex()}")
                 return [2, jogador]
             return [f'200: Resposta registrada', jogador]
 
