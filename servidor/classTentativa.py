@@ -1,5 +1,5 @@
 class Tentativa:
-    def __init__ (self,user:str,palavra):
+    def __init__ (self,user:object,palavra):
         self.nome = [user]
         self.palavra = palavra.lower()
         self.votos = 0
@@ -13,14 +13,10 @@ class Tentativa:
     def __repr__(self) -> str:
         return f'{self.palavra}'
     
-    def Engenharia_reversa(self,str)-> bool:
-        if str == self.__repr__():
-            return True
-
+    
 
     def setNewPlayers(self,jogador: object):
-        self.nome.append(jogador)
-        self.uptadePontos(5) 
+        self.nome.append(jogador) 
         
     def uptadePontos(self,pontos):
         self.pontos = pontos
@@ -32,8 +28,8 @@ class Tentativa:
     def getisValid(self):
         return self.valid
     
-    def invalidar(self):
-       
+    def invalidar(self, qtdePlayers):
+        if self.votos > qtdePlayers/2:
             self.valid = False
     
     def submit_points(self, qtdePlayers):
@@ -51,6 +47,3 @@ class Tentativa:
     def __str__(self):
         return f'{self.palavra}'
     
-
-
-

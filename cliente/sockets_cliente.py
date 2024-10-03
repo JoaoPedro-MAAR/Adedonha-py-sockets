@@ -107,9 +107,13 @@ class Jogador:
 
                             elif msg == 'votos':
                                 self.Mandar_array_em_forma_de_varias_mensagens(épara_o_server)
+
+                            elif msg == 'invld':
+                                self.Mandar_array_em_forma_de_varias_mensagens(épara_o_server)
                                     
                             else:
                                 self.msg_box.addstr(msg)
+
 
 
 

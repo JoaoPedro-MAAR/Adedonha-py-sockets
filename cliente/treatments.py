@@ -119,8 +119,10 @@ class Tratamentos:
                 array_de_mensagem = mensagem.strip().split(',')
                 for i in range(len(array_de_mensagem)):
                     internal_text = array_de_mensagem[i].strip()
-                    new_internal_text = 'invld:'+self.get_TemaAtual() + internal_text
+                    new_internal_text = 'invld:'+self.get_TemaAtual()+':' + internal_text
                     array_de_mensagem[i] = new_internal_text
+            else:
+                array_de_mensagem[0] = 'invld:'+self.get_TemaAtual()+':'+mensagem
 
 
 
