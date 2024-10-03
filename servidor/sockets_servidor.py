@@ -106,7 +106,7 @@ class Servidor:
             return [self.handleInvalid(resto_mensagem,conexao,jogador), jogador]
 
         else:
-            return [self.send_message("ERRO: Comando não reconhecido", conexao), jogador]
+            return [self.send_message("400", conexao), jogador]
 
 
     def PRNT(self,conexao,username):
