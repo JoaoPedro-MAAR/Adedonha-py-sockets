@@ -82,7 +82,7 @@ class Servidor:
                 jogador = self.PRNT(conexao, resto_mensagem[1])
                 return ['tentativa de registrar jogador', jogador]
             else:
-                return [self.send_message("ERRO: Não é possivel", conexao), jogador]
+                return [self.send_message(f"407:{self.game.getEstadoIndex()}", conexao), jogador]
 
         elif codigo_lower == "sair":
             return [self.SAIR(conexao, jogador), jogador]
@@ -104,7 +104,7 @@ class Servidor:
             return [self.send_message("RECEBI SEU STOP", conexao), jogador]
 
         elif codigo_lower == "invld":
-            return [self.send_message("RECEBI SEU VOTO", conexao), jogador]
+            return [self.handleInvalid(resto_mensagem,conexao,jogador), jogador]
 
         else:
             return [self.send_message("ERRO: Comando não reconhecido", conexao), jogador]
@@ -163,7 +163,7 @@ class Servidor:
 
 
     def SAIR(self,conexao, jogador):
-        self.send_message("200: Desconectando",conexao)
+        self.send_message("200:Desconectando",conexao)
         if jogador:
             self.lista.remover_elemento(jogador)
             print(f'Jogador {jogador} removido da lista')
@@ -201,7 +201,7 @@ class Servidor:
         for j in range(4):
             respostas = hashTemas[temas[j]]
             self.send_broadcast(f"200:{temas[j]}:{respostas}:{estado}")
-            #time.sleep(30)
+            time.sleep(30)
           
         estado = self.game.quadro_lideres()
         self.send_broadcast(f"200:{estado}")
@@ -212,7 +212,7 @@ class Servidor:
         self.end()
         return
     
-    def VOTO(self, voto,conexao, jogador):
+    def handleInvalid(self, voto,conexao, jogador):
         estado = self.game.VOTO(voto,conexao, jogador)
         self.send_message(f"200:{estado}",conexao)
 
