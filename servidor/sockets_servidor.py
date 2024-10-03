@@ -113,23 +113,25 @@ class Servidor:
     def PRNT(self,conexao,username):
         print('entrou em PRNT')
 
-        if self.tratamento_PRNT(username) == username:
+        tratado = self.tratamento_PRNT(username)
+
+        if tratado == username:
             jogador, estado = self.game.registrar(conexao,username)
             self.send_message(f'200:{len(self.lista)}:{estado}',conexao)
             return jogador
         else:
-            self.send_message(f'{self.tratamento_PRNT(username)}',conexao)
+            self.send_message(f'{tratado}:{self.game.getEstadoIndex}',conexao)
         
         
         
     def tratamento_PRNT(self,username):
         print('entrou em tratamento_PRNT')
         if len(username) == 0:
-            return "ERRO: Nome não pode ser vazio"
+            return "400"
         
         if self.existeUsername(username):
             #ainda ta errado continua aceitando o nome repetido
-            return "ERRO: Nome já existe"
+            return "402"
         return username
         
     
