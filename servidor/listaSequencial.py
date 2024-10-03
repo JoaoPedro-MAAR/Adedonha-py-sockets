@@ -107,6 +107,27 @@ class Lista:
         '''
         posicao = self.busca(carga)
         return self.remover(posicao)    
+    
+
+    def OrdenarObjetos(self, atributo: str):
+        ''''
+        Método que ordena os objetos da lista com base em um atributo comum
+        e retorna a lista ordenada.
+        '''
+        try:
+            # Verifica se a lista está vazia
+            if self.esta_vazia():
+                raise ListaError("A lista está vazia")
+
+            # Cria uma lista de objetos não nulos
+            objetos = [obj for obj in self.__array if obj is not None]
+
+            # Ordena a lista de objetos com base no atributo fornecido
+            objetos_ordenados = sorted(objetos, key=lambda obj: getattr(obj, atributo))
+
+            return objetos_ordenados
+        except AttributeError:
+            raise ListaError(f"O atributo '{atributo}' não existe nos objetos da lista")
 
     def __str__(self)->str:
         s = 'lista->[ '

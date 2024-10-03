@@ -27,8 +27,8 @@ class Tentativa:
         if self.votos > qtdePlayers/2:
             self.valid = False
     
-    def submit_points(self):
-        self.invalidar()
+    def submit_points(self, qtdePlayers):
+        self.invalidar(qtdePlayers)
         if self.getisValid():
             for i in range(0,len(self.nome)):
                 self.nome[i].soma_pontos(self.pontos)

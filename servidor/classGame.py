@@ -76,17 +76,14 @@ class Game:
         self.estado_index = 3
         for j in range(4):
             respostas = self.hashTemas[self.temas[j]]
-            for i in range(1,len(self.lista_players)+1):
-                self.hashTemas[self.temas[j]][i].submit_points()     
+            for i in range(len(self.lista_players)):
+                self.hashTemas[self.temas[j]][i].submit_points(len(self.lista_players))     
         return self.estado_index
     
     
     def getLideres(self):
-        lideres = []
-        for i in range(1,len(self.lista_players)+1):
-            lideres.append(self.lista_players[i])
-        lideres.sort(key=lambda x: x.pontuacao, reverse=True)
-        return lideres[:3]
+        lideres = self.lista_players.OrdenarObjetos('pontuacao')
+        return lideres[-3:]
     
     def getEstado(self):
         return self.estado[self.estado_index]
