@@ -122,7 +122,7 @@ class Tratamentos:
                     new_internal_text = 'invld:'+self.get_TemaAtual()+':' + internal_text
                     array_de_mensagem[i] = new_internal_text
             else:
-                array_de_mensagem[0] = 'invld:'+self.get_TemaAtual()+':'+mensagem
+                return 'invld:'+self.get_TemaAtual()+':'+mensagem
 
 
 

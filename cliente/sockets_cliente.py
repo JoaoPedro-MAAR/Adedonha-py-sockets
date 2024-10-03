@@ -110,6 +110,7 @@ class Jogador:
 
                             elif msg == 'invld':
                                 self.Mandar_array_em_forma_de_varias_mensagens(épara_o_server)
+                                self.send_msg(épara_o_server)
                                     
                             else:
                                 self.msg_box.addstr(msg)
