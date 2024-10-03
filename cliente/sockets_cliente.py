@@ -81,7 +81,8 @@ class Jogador:
                     msg = self.input_box.getstr().decode()
                     if msg.lower() == "sair":
                         try:
-                            t.interrupt_main()               
+                            t.interrupt_main()
+                            self.send(msg.lower())               
                             self.cliente.close()
                             
                         except: pass
@@ -91,7 +92,7 @@ class Jogador:
                         if épara_o_server == True:
                             if msg == None:
                                 continue
-                            self.send_msg(msg)
+                            self.send_msg(msg.strip())
                         else:
                             '''
                             Se entrar aqui é porque a mensagem é para ser tratada pelo cliente, épara_o_server pode assumir diversas tipos se passar daqui
@@ -101,6 +102,7 @@ class Jogador:
                             if msg == 'rspt':
                                 
                                 self.Mandar_array_em_forma_de_varias_mensagens(épara_o_server)
+                                self.msg_box.addstr("Respostas enviadas")
 
                             elif msg == 'votos':
                                 self.Mandar_array_em_forma_de_varias_mensagens(épara_o_server)

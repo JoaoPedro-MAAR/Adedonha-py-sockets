@@ -23,6 +23,8 @@ class Tratamentos:
         
         if codigo[0] == '200':
             return self.tratamento_200(mensagem,estado)
+        elif codigo[0].isdigit() and 400 <= int(codigo[0]) < 408:
+            return self.tratamento_4xx(mensagem,estado)
         
 
                 
@@ -56,10 +58,36 @@ class Tratamentos:
         except Exception as e:
             return f'Erro ao tratar mensagem 200: {e}\n', estado_index
             
-
+    def tratamento_4xx(self,mensagem:str,estado_index:int):
+        dict_400 = {
+            '400':'Mensagem inválida',
+            '401':'Jogador não encontrado',
+            '402':'Jogador já cadastrado',
+            '403':'Requisição negada',
+            '404':'tema não encontrado',
+            '406': 'Partida não pode ser iniciada',
+            '407': 'Patida em andamento'    
+            }
+        try:
+            mensagem = mensagem.split(':')
+            valor = dict_400[mensagem[-1]]
+            return f'Erro {valor}\n',estado_index
+        except KeyError as e:
+            return f'Erro desconhecido 4xx\n',estado_index
+            
+            
+                        
 
     def tratamento_mensagem_com_estado(self,mensagem:str,estado):
+        '''
+        Um tratamento de mensagens que recebe uma mensagem e um estado e retorna uma mensagem e um booleano
+        Se o booleano for True a mensagem é para ser enviada para o servidor imediatamente
+        Se o booleano for False a mensagem é para ser tratada pelo cliente
+        e depois pode ser enviada para o servidor
+        
+        '''
     
+        
         if estado == 0:
             if mensagem == "start":
                 return 'start',True
@@ -121,7 +149,7 @@ class Tratamentos:
         """
         lista_dos_rspt = []
         for i in range(len(self.temas)):
-            tema_now = self.temas[i]
+            tema_now = self.temas[i]            
             associado = self.hashTemas.get(tema_now.lower())
             lista_dos_rspt.append(f'rspt {associado} {tema_now} ')
         return 'rspt',lista_dos_rspt
