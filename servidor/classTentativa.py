@@ -8,7 +8,15 @@ class Tentativa:
         
         
     def __str__(self):
-        return f'{self.nome} : {self.palavra}'
+        return f'{self.palavra}'
+
+    def __repr__(self) -> str:
+        return f'{self.palavra}'
+    
+    def Engenharia_reversa(self,str)-> bool:
+        if str == self.__repr__():
+            return True
+
 
     def setNewPlayers(self,jogador: object):
         self.nome.append(jogador) 
@@ -23,8 +31,8 @@ class Tentativa:
     def getisValid(self):
         return self.valid
     
-    def invalidar(self, qtdePlayers):
-        if self.votos > qtdePlayers/2:
+    def invalidar(self):
+       
             self.valid = False
     
     def submit_points(self, qtdePlayers):

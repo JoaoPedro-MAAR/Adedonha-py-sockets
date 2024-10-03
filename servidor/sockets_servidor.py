@@ -1,18 +1,17 @@
-import socket
-import threading
 import multiprocessing
-from utilities import separaProtocolo_Aplicacao
-from listaSequencial import Lista as l 
+import random
+import socket
+import string
+import threading
+import time
+
+from classGame import Game
 from classPlayer import Player
 from classTentativa import Tentativa
 from Hashtable import HashTable
-import random
-import string
-import time
-from classGame import Game
+from listaSequencial import Lista as l
+from utilities import separaProtocolo_Aplicacao
 
-  
-  
 TAMANHO_MAXIMO = 10
 
 class Servidor:
@@ -186,7 +185,7 @@ class Servidor:
     
     def RSPT(self,resposta, tema, conexao, jogador):
         estado = self.game.resposta(resposta, tema, conexao, jogador)
-        self.send_message(f"200,{estado}",conexao)
+        self.send_message(f"200:{estado}",conexao)
         #Representa que o Jogador respondeu
         return jogador
     
@@ -200,10 +199,13 @@ class Servidor:
     
     def startVotacao(self):
         estado, temas, hashTemas = self.game.startVotação()
+        str_respostas = ''
         for j in range(4):
             respostas = hashTemas[temas[j]]
+            str_respostas += str(respostas)
             self.send_broadcast(f"200:{temas[j]}:{respostas}:{estado}")
             time.sleep(30)
+            
           
         estado = self.game.quadro_lideres()
         self.send_broadcast(f"200:{estado}")

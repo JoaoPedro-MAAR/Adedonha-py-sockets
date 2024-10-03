@@ -1,18 +1,16 @@
-import socket
-import threading
+import asyncio
 import multiprocessing
-from utilities import separaProtocolo_Aplicacao
-from listaSequencial import Lista as l 
+import random
+import socket
+import string
+import threading
+
 from classPlayer import Player
 from classTentativa import Tentativa
 from Hashtable import HashTable
-import random
-import string
-import asyncio
+from listaSequencial import Lista as l
+from utilities import separaProtocolo_Aplicacao
 
-
-  
-  
 TAMANHO_MAXIMO = 10
 
 class Game:

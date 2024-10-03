@@ -1,5 +1,6 @@
 import numpy as np
 
+
 class HashTable(object):
     '''
     Implementação de uma tabela hash com tratamento de colisão por 

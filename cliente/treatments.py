@@ -1,5 +1,5 @@
-from lista_hasttemas import getEstado,getTemas
 from Hashtable import HashTable
+from lista_hasttemas import getEstado, getTemas
 
 
 class Tratamentos:
@@ -26,7 +26,8 @@ class Tratamentos:
         elif codigo[0].isdigit() and 400 <= int(codigo[0]) < 408:
             return self.tratamento_4xx(mensagem,estado)
         
-
+    def get_TemaAtual(self):
+        return self.temaAtual
                 
     def tratamento_200(self,mensagem:str,estado_index:int):
         try:
@@ -44,10 +45,10 @@ class Tratamentos:
                 
             elif mensagem[-1] == '2':
                 estado_index = 2
-                temas = mensagem[1]
+                self.temaAtual = mensagem[1]
                 respostasArray = mensagem[2]
-                respostasString = self.ArrayToString(respostasArray)
-                return f'{self.estado[estado_index]}>Votação iniciada\n {print(respostasString)} Essas são as palavras do tema :  {temas}\n Vote nas respostas invalidas se houver mais de uma resposta invalida separe por virgula r1,r2,r3\n',estado_index
+                respostasString = self.ArrayObjectsToString(respostasArray)
+                return f'{self.estado[estado_index]}>Votação iniciada\n {print(respostasString)} Essas são as palavras do tema :  {self.get_TemaAtual()}\n Vote nas respostas invalidas se houver mais de uma resposta invalida separe por virgula r1,r2,r3\n',estado_index
 
             elif mensagem[-1] == '3':
                 estado_index = 3
@@ -91,7 +92,7 @@ class Tratamentos:
         if estado == 0:
             if mensagem == "start":
                 return 'start',True
-            return f'prnt {mensagem}',True
+            return f'prnt:{mensagem}',True
 
         elif estado == 1:
             if mensagem.split()[-1] not in self.temas and mensagem.split()[0] != 'stop':
@@ -117,7 +118,7 @@ class Tratamentos:
                 array_de_mensagem = mensagem.strip().split(',')
                 for i in range(len(array_de_mensagem)):
                     internal_text = array_de_mensagem[i].strip()
-                    new_internal_text = 'invld ' + internal_text
+                    new_internal_text = 'invld:'+self.get_TemaAtual() + internal_text
                     array_de_mensagem[i] = new_internal_text
 
 
@@ -151,16 +152,16 @@ class Tratamentos:
         for i in range(len(self.temas)):
             tema_now = self.temas[i]            
             associado = self.hashTemas.get(tema_now.lower())
-            lista_dos_rspt.append(f'rspt {associado} {tema_now} ')
+            lista_dos_rspt.append(f'rspt:{associado}:{tema_now}')
         return 'rspt',lista_dos_rspt
 
 
 
-    def ArrayToString(self,array)->str:
+    def ArrayObjectsToString(self,array)->str:
         """
-        Função que transforma um array em uma string
+        Função que transforma um array de objetos em uma string
         """
         string = ''
         for i in range(len(array)):
-            string += f'{array[i]} '
+            string += f'{str(array[i])} '
         return string

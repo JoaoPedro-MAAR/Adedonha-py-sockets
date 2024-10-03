@@ -1,11 +1,12 @@
-import socket
-import threading
-import time 
 import curses
 import multiprocessing
+import socket
+import threading
+import time
 from threading import Thread
-from treatments import Tratamentos
+
 from Hashtable import HashTable
+from treatments import Tratamentos
 
 #Ainda sera modularizado em classes, as classes serão separadas em arquivos diferentes e importadas aqui
 
